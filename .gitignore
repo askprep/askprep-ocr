@@ -1,2 +1,4 @@
 *.pyc
 */*.jpg
+uploads/tax.jpeg
+pyimagesearch/__init__.py
