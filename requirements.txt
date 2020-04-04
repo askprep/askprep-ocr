@@ -3,7 +3,7 @@ imutils==0.5.3
 matplotlib==2.2.5
 numpy==1.16.6
 opencv-contrib-python==4.2.0.32
-opencv-python==4.2.0.32
+opencv-python==3.1.0.5
 pathlib2==2.3.5
 Pillow==5.1.0
 pylsd==0.0.2
