@@ -17,7 +17,7 @@ app.post('/ocr',(req,res)=>{
         res.json(content);
     }).catch(err=>{
         console.error(err);
-        res.json({"error":"Server Error"});
+        res.status(500).send({"error":"Server Error"});
     });
 });
 

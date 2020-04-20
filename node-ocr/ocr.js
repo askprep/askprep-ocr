@@ -1,7 +1,4 @@
 var tesseract = require('./node-tesseract');
-var jsdom = require('jsdom');
-var djs = require('draft-js');
-var filename = "desk.JPG";
 
 var options = {
     l: "eng",
