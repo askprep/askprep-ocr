@@ -1,9 +1,11 @@
 var ocr = require('./node-ocr/ocr');
 var express = require('express');
 var bodyParser = require('body-parser');
+var cors = require('cors');
 
 //create express app
 const app = express();
+app.use(cors());
 
 // parse request of content-type - application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({extended:true}));
