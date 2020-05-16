@@ -24,3 +24,4 @@ node-ocr/console.log(m)
 node-ocr/draft.docx
 node-ocr/eng.traineddata
 uploads/Mech.png
+lib/*
