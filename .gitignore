@@ -23,5 +23,7 @@ node-ocr/~$draft.docx
 node-ocr/console.log(m)
 node-ocr/draft.docx
 node-ocr/eng.traineddata
-uploads/Mech.png
+uploads/*
 lib/*
+bin/*
+pyvenv.cfg
