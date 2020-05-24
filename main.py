@@ -35,7 +35,9 @@ def upload_file():
         filename = secure_filename(file.filename)
         image_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
         file.save(image_path)
-        scanner = DocScanner()
+        height = request.form["height"]
+        width = request.form["width"]
+        scanner = DocScanner(scale_height=height, scale_width=width)
         screenContour = scanner.image_bounding_box(image_path)
         screenContour = np.array(screenContour)
         resp = json.dumps({"message":"File successfully uploaded", "contour":screenContour, "image_path":image_path}, cls=NumpyEncoder)
@@ -51,10 +53,12 @@ def upload_file():
 def transform_file():
     image_path = request.json["image_path"]
     screenContour = np.array(request.json["contour"])
-    scanner = DocScanner()
+    height = request.json["height"]
+    width = request.json["width"]
+    scanner = DocScanner(scale_height=height, scale_width=width)
     try:
         scanner.transform_after_contour(image_path, screenContour)
-        resp = jsonify({"message":"File successfully uploaded", "image_path":image_path})
+        resp = jsonify({"message":"File successfully transformed", "image_path":image_path})
         resp.status_code = 201
     except:
         resp = jsonify({"message":"Transform failed to save", "image_path":image_path})

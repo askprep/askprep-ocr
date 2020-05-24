@@ -24,7 +24,7 @@ import os
 class DocScanner(object):
     """An image scanner"""
 
-    def __init__(self, interactive=False, MIN_QUAD_AREA_RATIO=0.25, MAX_QUAD_ANGLE_RANGE=40):
+    def __init__(self, scale_height, scale_width, interactive=False, MIN_QUAD_AREA_RATIO=0.25, MAX_QUAD_ANGLE_RANGE=40):
         """
         Args:
             interactive (boolean): If True, user can adjust screen contour before
@@ -34,10 +34,12 @@ class DocScanner(object):
                 of the original image. Defaults to 0.25.
             MAX_QUAD_ANGLE_RANGE (int):  A contour will also be rejected if the range 
                 of its interior angles exceeds MAX_QUAD_ANGLE_RANGE. Defaults to 40.
-        """        
+        """
         self.interactive = interactive
         self.MIN_QUAD_AREA_RATIO = MIN_QUAD_AREA_RATIO
-        self.MAX_QUAD_ANGLE_RANGE = MAX_QUAD_ANGLE_RANGE        
+        self.MAX_QUAD_ANGLE_RANGE = MAX_QUAD_ANGLE_RANGE
+        self.scale_height = scale_height
+        self.scale_width = scale_width
 
     def filter_corners(self, corners, min_dist=20):
         """Filters corners that are within min_dist of others"""
@@ -307,42 +309,37 @@ class DocScanner(object):
         # print("Proccessed " + basename)
 
     def image_bounding_box(self, image_path):
-        RESCALED_HEIGHT = 500.0
-        OUTPUT_DIR = 'output'
-
         # load the image and compute the ratio of the old height
         # to the new height, clone it, and resize it
         image = cv2.imread(image_path)
 
         assert(image is not None)
 
-        ratio = image.shape[0] / RESCALED_HEIGHT
-        rescaled_image = imutils.resize(image, height = int(RESCALED_HEIGHT))
+        rescaled_image = imutils.resize(image, height = int(self.scale_height), width=int(self.scale_width))
 
         # get the contour of the document
         screenCnt = self.get_contour(rescaled_image)
-        return screenCnt * ratio
+        return screenCnt
 
     def transform_after_contour(self, image_path, screenContour):
         # load the image and compute the ratio of the old height
         # to the new height, clone it, and resize it
-        print('uptill here')
         image = cv2.imread(image_path)
-        print('after imread here')
+        image = imutils.resize(image, height = int(self.scale_height), width=int(self.scale_width))
         # apply the perspective transformation
         warped = transform.four_point_transform(image, screenContour)
         print('after transform here')
         # convert the warped image to grayscale
-        gray = cv2.cvtColor(warped, cv2.COLOR_BGR2GRAY)
+        #gray = cv2.cvtColor(warped, cv2.COLOR_BGR2GRAY)
 
         # sharpen image
-        sharpen = cv2.GaussianBlur(gray, (0,0), 3)
-        sharpen = cv2.addWeighted(gray, 1.5, sharpen, -0.5, 0)
+        #sharpen = cv2.GaussianBlur(gray, (0,0), 3)
+        #sharpen = cv2.addWeighted(gray, 1.5, sharpen, -0.5, 0)
 
         # apply adaptive threshold to get black and white effect
-        thresh = cv2.adaptiveThreshold(sharpen, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 21, 15)
+        #thresh = cv2.adaptiveThreshold(sharpen, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 21, 15)
         
-        cv2.imwrite(image_path, thresh)
+        cv2.imwrite(image_path, warped)#thresh)
         print("Proccessed " + image_path)
 
 if __name__ == "__main__":
