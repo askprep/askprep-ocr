@@ -35,6 +35,10 @@ def upload_file():
         filename = secure_filename(file.filename)
         image_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
         file.save(image_path)
+        if "max_width" not in request.form:
+            resp = jsonify({"message":"No max_width given in the request"})
+            resp.status_code = 400
+            return resp
         width = request.form["max_width"]
         scanner = DocScanner(max_width=int(width))
         [screenContour, height, width] = scanner.image_bounding_box(image_path)
