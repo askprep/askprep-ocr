@@ -24,7 +24,7 @@ import os
 class DocScanner(object):
     """An image scanner"""
 
-    def __init__(self, scale_height, scale_width, interactive=False, MIN_QUAD_AREA_RATIO=0.25, MAX_QUAD_ANGLE_RANGE=40):
+    def __init__(self, max_width, interactive=False, MIN_QUAD_AREA_RATIO=0.25, MAX_QUAD_ANGLE_RANGE=40):
         """
         Args:
             interactive (boolean): If True, user can adjust screen contour before
@@ -38,8 +38,7 @@ class DocScanner(object):
         self.interactive = interactive
         self.MIN_QUAD_AREA_RATIO = MIN_QUAD_AREA_RATIO
         self.MAX_QUAD_ANGLE_RANGE = MAX_QUAD_ANGLE_RANGE
-        self.scale_height = scale_height
-        self.scale_width = scale_width
+        self.max_width = max_width
 
     def filter_corners(self, corners, min_dist=20):
         """Filters corners that are within min_dist of others"""
@@ -314,18 +313,27 @@ class DocScanner(object):
         image = cv2.imread(image_path)
 
         assert(image is not None)
-
-        rescaled_image = imutils.resize(image, height = int(self.scale_height), width=int(self.scale_width))
+        [height, width] = self.get_shape(image)
+        rescaled_image = imutils.resize(image, height = int(height), width=int(width))
 
         # get the contour of the document
         screenCnt = self.get_contour(rescaled_image)
         return screenCnt
 
+    def get_shape(self, image):
+        height = image.shape[0]
+        width = image.shape[1]
+        if width > self.max_width:
+            height = float(float(self.max_width)/float(width))*height
+            width = self.max_width
+        return [height, width]
+
     def transform_after_contour(self, image_path, screenContour):
         # load the image and compute the ratio of the old height
         # to the new height, clone it, and resize it
         image = cv2.imread(image_path)
-        image = imutils.resize(image, height = int(self.scale_height), width=int(self.scale_width))
+        [height, width] = self.get_shape(image)
+        image = imutils.resize(image, height = int(height), width=int(width))
         # apply the perspective transformation
         warped = transform.four_point_transform(image, screenContour)
         print('after transform here')
