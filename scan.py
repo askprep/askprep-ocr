@@ -318,7 +318,7 @@ class DocScanner(object):
 
         # get the contour of the document
         screenCnt = self.get_contour(rescaled_image)
-        return screenCnt
+        return [screenCnt, height, width]
 
     def get_shape(self, image):
         height = image.shape[0]
@@ -349,6 +349,7 @@ class DocScanner(object):
         
         cv2.imwrite(image_path, warped)#thresh)
         print("Proccessed " + image_path)
+        return [height, width]
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()

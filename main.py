@@ -37,9 +37,9 @@ def upload_file():
         file.save(image_path)
         width = request.form["max_width"]
         scanner = DocScanner(max_width=int(width))
-        screenContour = scanner.image_bounding_box(image_path)
+        [screenContour, height, width] = scanner.image_bounding_box(image_path)
         screenContour = np.array(screenContour)
-        resp = json.dumps({"message":"File successfully uploaded", "contour":screenContour, "image_path":image_path}, cls=NumpyEncoder)
+        resp = json.dumps({"message":"File successfully uploaded", "contour":screenContour, "image_path":image_path, "height":height, "width":width}, cls=NumpyEncoder)
         # resp.status_code = 201
         return resp
     else:
@@ -55,8 +55,8 @@ def transform_file():
     width = request.json["max_width"]
     scanner = DocScanner(max_width=int(width))
     try:
-        scanner.transform_after_contour(image_path, screenContour)
-        resp = jsonify({"message":"File successfully transformed", "image_path":image_path})
+        [height, width] = scanner.transform_after_contour(image_path, screenContour)
+        resp = jsonify({"message":"File successfully transformed", "image_path":image_path, "height":height, "width":width})
         resp.status_code = 201
     except:
         resp = jsonify({"message":"Transform failed to save", "image_path":image_path})
