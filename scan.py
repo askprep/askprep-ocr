@@ -337,22 +337,26 @@ class DocScanner(object):
         image = cv2.imread(image_path)
         print(image.shape)
         [height, width] = self.get_shape(image)
+        ratio = float(image.shape[1])/float(width)
         print([height, width])
-        image = imutils.resize(image, height = int(height), width=int(width))
+        print(ratio)
+        # image = imutils.resize(image, height = int(height), width=int(width))
         # apply the perspective transformation
+        screenContour = screenContour*ratio
+        print("Before transform")
         warped = transform.four_point_transform(image, screenContour)
         print('after transform here')
         # convert the warped image to grayscale
-        #gray = cv2.cvtColor(warped, cv2.COLOR_BGR2GRAY)
+        gray = cv2.cvtColor(warped, cv2.COLOR_BGR2GRAY)
 
         # sharpen image
-        #sharpen = cv2.GaussianBlur(gray, (0,0), 3)
-        #sharpen = cv2.addWeighted(gray, 1.5, sharpen, -0.5, 0)
+        sharpen = cv2.GaussianBlur(gray, (0,0), 3)
+        sharpen = cv2.addWeighted(gray, 1.5, sharpen, -0.5, 0)
 
         # apply adaptive threshold to get black and white effect
-        #thresh = cv2.adaptiveThreshold(sharpen, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 21, 15)
+        thresh = cv2.adaptiveThreshold(sharpen, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 21, 15)
         
-        cv2.imwrite(image_path, warped)#thresh)
+        cv2.imwrite(image_path, thresh)
         print("Proccessed " + image_path)
         return [height, width]
 
