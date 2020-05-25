@@ -311,14 +311,17 @@ class DocScanner(object):
         # load the image and compute the ratio of the old height
         # to the new height, clone it, and resize it
         image = cv2.imread(image_path)
-
+        RESCALED_HEIGHT = 500
         assert(image is not None)
+        print(image.shape)
         [height, width] = self.get_shape(image)
-        rescaled_image = imutils.resize(image, height = int(height), width=int(width))
+        print([height, width])
+        ratio = height/RESCALED_HEIGHT
+        rescaled_image = imutils.resize(image, height = int(RESCALED_HEIGHT))
 
         # get the contour of the document
         screenCnt = self.get_contour(rescaled_image)
-        return [screenCnt, height, width]
+        return [screenCnt*ratio, height, width]
 
     def get_shape(self, image):
         height = image.shape[0]
@@ -332,7 +335,9 @@ class DocScanner(object):
         # load the image and compute the ratio of the old height
         # to the new height, clone it, and resize it
         image = cv2.imread(image_path)
+        print(image.shape)
         [height, width] = self.get_shape(image)
+        print([height, width])
         image = imutils.resize(image, height = int(height), width=int(width))
         # apply the perspective transformation
         warped = transform.four_point_transform(image, screenContour)
