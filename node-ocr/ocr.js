@@ -1,4 +1,5 @@
 var tesseract = require('./node-tesseract');
+const cv = require("opencv4nodejs");
 
 var options = {
     l: "eng",
@@ -8,7 +9,7 @@ var options = {
 };
 
 
-function tsvToRawContent(tsv) {
+function tsvToRawContent(tsv, ratio) {
     const lines = tsv.split("\n");
 
     let content = {
@@ -38,10 +39,10 @@ function tsvToRawContent(tsv) {
             });
             rectangles.push({
                 "type": "text",
-                "left": parseInt(currentline[indexOfHeader["left"]]),
-                "top": parseInt(currentline[indexOfHeader["top"]]),
-                "width": parseInt(currentline[indexOfHeader["width"]]),
-                "height": parseInt(currentline[indexOfHeader["height"]])
+                "left": parseFloat(currentline[indexOfHeader["left"]]) / ratio,
+                "top": parseFloat(currentline[indexOfHeader["top"]]) / ratio,
+                "width": parseFloat(currentline[indexOfHeader["width"]]) / ratio,
+                "height": parseFloat(currentline[indexOfHeader["height"]]) / ratio
             });
             // const len = content["blocks"].length;
             // if( currentline[indexOfHeader["block_num"]] != "1")
@@ -68,14 +69,18 @@ function tsvToRawContent(tsv) {
     };
 }
 
-let imageToDraftContent = (filename) => {
+let imageToDraftContent = (filename, max_width) => {
     return new Promise(function (resolve, reject) {
         tesseract.process(filename, options, function (err, tsv) {
             if (err) {
                 console.error(err);
                 reject(err);
             } else {
-                const contentJson = tsvToRawContent(tsv);
+                let image = cv.imread(filename);
+                let ratio = 1;
+                if (image.cols > max_width)
+                    ratio = image.cols / max_width;
+                const contentJson = tsvToRawContent(tsv, ratio);
                 resolve(contentJson);
             }
         });

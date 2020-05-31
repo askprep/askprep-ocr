@@ -19,6 +19,7 @@ app.use(bodyParser.json());
 
 // define a simple route
 app.post('/ocr', (req, res) => {
+    console.log(req.body);
     let image_path = req.body["image_path"];
     ocr.imageToDraftContent(image_path).then(function (content) {
         res.json(content["content"]);
@@ -33,7 +34,8 @@ app.post('/ocr', (req, res) => {
 // define a simple route
 app.post('/rects', (req, res) => {
     let image_path = req.body["image_path"];
-    ocr.imageToDraftContent(image_path).then(function (content) {
+    let max_width = req.body["max_width"];
+    ocr.imageToDraftContent(image_path, max_width).then(function (content) {
         res.json(content["rectangles"]);
     }).catch(err => {
         console.error(err);
