@@ -1,5 +1,4 @@
 var tesseract = require('./node-tesseract');
-const cv = require("opencv4nodejs");
 
 var options = {
     l: "eng",
