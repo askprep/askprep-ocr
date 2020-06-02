@@ -46,3 +46,5 @@ output Format
     "height":height,
     "width":width
 }
+docker build -t askprep_ocr:1.0 .
+docker run -it askprep_ocr:1.0
