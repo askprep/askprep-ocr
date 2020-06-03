@@ -5,7 +5,7 @@ opencv-contrib-python==4.2.0.32
 opencv-python==3.4.8.29
 pathlib2==2.3.5
 Pillow==5.1.0
-pylsd==0.0.2
+ocrd-fork-pylsd
 Werkzeug==1.0.1
 flask-cors
 scipy
