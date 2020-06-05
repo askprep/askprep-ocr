@@ -1,9 +1,10 @@
 var tesseract = require('./node-tesseract');
+var cv = require("opencv4nodejs");
 
 var options = {
     l: "eng",
     psm: 1,
-    binary: "\"C:\\Program Files\\Tesseract-OCR\\tesseract.exe\"",
+    // binary: "\"C:\\Program Files\\Tesseract-OCR\\tesseract.exe\"",
     config: "tsv"
 };
 
@@ -78,7 +79,7 @@ let imageToDraftContent = (filename, max_width) => {
                 let image = cv.imread(filename);
                 let ratio = 1;
                 if (image.cols > max_width)
-                    ratio = image.cols / max_width;
+                   ratio = image.cols / max_width;
                 const contentJson = tsvToRawContent(tsv, ratio);
                 resolve(contentJson);
             }
