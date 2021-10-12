@@ -2,7 +2,7 @@ Flask==1.1.2
 imutils==0.5.3
 numpy==1.17.3
 opencv-contrib-python==4.2.0.32
-opencv-python==3.4.8.29
+opencv-python==4.2.0.32
 pathlib2==2.3.5
 Pillow==5.1.0
 ocrd-fork-pylsd
